@@ -4,9 +4,9 @@
   let mensaje = "";
   let accessToken = "";
 
-  let URL = "http://localhost:3000";
+  // let URL = "http://localhost:3000";
 
-  // let URL = "https://jwt-back.herokuapp.com";
+  let URL = "https://jwt-back.herokuapp.com";
 
   function info(msg, timeout) {
     mensaje = msg;
