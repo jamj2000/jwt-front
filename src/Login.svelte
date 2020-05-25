@@ -67,7 +67,11 @@
     if (res.status == 403 || res.status == 401) { console.log('Acceso denegado o sin acceso'); } 
     
     let data = await res.json();   
-    if (data) console.log(data);
+    if (data) {
+      mensaje = data; 
+      setTimeout(() => (mensaje = ''), 5000);  
+      console.log(data);
+      }
      
   }
 </script>
