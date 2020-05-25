@@ -98,4 +98,4 @@
 
   <input type="button" value="Obtener clientes" on:click={getClientes} />
 </div>
-<div id="feedback">{@html mensaje}</div>
+<pre id="feedback">{@html mensaje}</pre>
