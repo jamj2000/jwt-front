@@ -4,52 +4,73 @@
   let mensaje = "";
   let accessToken = "";
 
-  // let URL = "http://localhost:3000";
+  let URL = "http://localhost:3000";
 
-  let URL = "https://jwt-back.herokuapp.com";
+  // let URL = "https://jwt-back.herokuapp.com";
 
-  function registrar() {
-    fetch(URL + "/auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(usuario)
-    })
-      .then(res => res.json())
-      .then(data => {
-        mensaje = data.msg;
-        setTimeout(() => (mensaje = ""), 3000);
-      })
-      .catch(err => console.log(err));
+  function info(msg, timeout) {
+    mensaje = msg;
+    setTimeout(() => (mensaje = ""), timeout);
   }
 
-  function obtenerToken() {
-    fetch(URL + "/auth/login", {
+
+  async function registrar() {
+    let res = await fetch(URL + "/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(usuario)
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.msg) {
-          mensaje = data.msg;
-          setTimeout(() => (mensaje = ""), 4000);
-        } else {
-          accessToken = data;
-          console.log(accessToken);
-        }
-      })
-      .catch(err => console.log(err));
+    });
 
-    //await login({ jwt_token })
-    // console.log(jwt_token);
+    switch (res.status) {
+      case 500:
+        mensaje = "Error. El usuario no pudo registrarse.";
+        setTimeout(() => (mensaje = ""), 4000);
+        break;  
+      case 401:
+        mensaje = "Ya hay un usuario registrado con este email.";
+        setTimeout(() => (mensaje = ""), 4000);
+        break;
+      case 201:
+      case 200:
+        mensaje = "El usuario fue registrado correctamente.";
+        info(mensaje, 4000);
+        break;
+      default:
+    }
+  }
+
+  async function iniciar() {
+    let data = {};
+
+    let res = await fetch(URL + "/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(usuario)
+    });
+
+    switch (res.status) {
+      case 401:
+        mensaje = "Inicio de sesión incorrecto.";
+        setTimeout(() => (mensaje = ""), 4000);
+        break;
+      case 201:
+      case 200:
+        mensaje = "Inicio de sesión correcto.";
+        accessToken = await res.json();
+        info(mensaje, 4000);
+        break;
+      default:
+    }
   }
 
   async function getClientes() {
     let authorization = "Bearer " + accessToken;
+    let data = {};
+
     let res = await fetch(URL + "/api/clientes", {
       method: "GET",
       headers: {
@@ -57,15 +78,20 @@
       }
     });
 
-    if (res.status == 403 || res.status == 401) {
-      console.log("Acceso denegado o sin acceso");
-    }
-
-    let data = await res.json();
-    if (data) {
-      mensaje = JSON.stringify(data, null, 2);
-      setTimeout(() => (mensaje = ""), 8000);
-      console.log(data);
+    switch (res.status) {
+      case 403:
+        info("Acceso denegado", 4000);
+        break;
+      case 401:
+        info("No autorizado", 4000);
+        break;
+      case 201:
+      case 200:
+        data = await res.json();
+        mensaje = JSON.stringify(data, null, 2);
+        setTimeout(() => (mensaje = ""), 8000);
+        break;
+      default:
     }
   }
 </script>
@@ -85,7 +111,7 @@
     placeholder="password" />
   <br />
   <input type="button" value="Registrarme" on:click={registrar} />
-  <input type="button" value="Iniciar sesión" on:click={obtenerToken} />
+  <input type="button" value="Iniciar sesión" on:click={iniciar} />
   <br />
 
   <input type="button" value="Obtener clientes" on:click={getClientes} />
