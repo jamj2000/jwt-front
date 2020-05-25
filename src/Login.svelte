@@ -68,7 +68,7 @@
     
     let data = await res.json();   
     if (data) {
-      mensaje = data; 
+      mensaje = JSON.stringify(data, null, 2); 
       setTimeout(() => (mensaje = ''), 5000);  
       console.log(data);
       }
