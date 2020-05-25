@@ -2,7 +2,7 @@
   import { setContext } from "svelte";
   import Login from "./Login.svelte";
 
-  const BACKEND = "https://jwt-back.herokuapp.com/api/articulos/";
+  const BACKEND = "https://jwt-back.herokuapp.com";
 
   setContext("BACKEND", BACKEND);
 </script>
