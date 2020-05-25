@@ -32,30 +32,22 @@
       body: JSON.stringify(usuario)
     })
       .then(res => res.json())
-      .then(token =>  { accessToken = token; console.log(accessToken) })
-      .catch(err => console.log(err));
+      .then(token =>  { 
+        accessToken = token; 
+        console.log(accessToken) 
+      })
+      .catch(err => {
+        mensaje = err.msg;
+        setTimeout(() => (mensaje = ''), 8000);  
+        console.log(err)
+      });
 
     //await login({ jwt_token })
     // console.log(jwt_token);
   }
 
-//   function getClientes() {
-//     fetch(URL + "/api/clientes", {
-//       method: "GET",
-//       headers: {
-//         Authorization: "Bearer " + accessToken
-//       }
-//     })
-//       .then(res => {if (res.status == 401)  console.log('Sin permiso'); res.json()} )
-//       .then(data => {
-//         console.log(data);        
-//       })
-//       .catch(err => {
-//         console.log(err);
-//       });
-//   }
 
- async function getClientes() {
+async function getClientes() {
     let authorization = "Bearer " + accessToken;
     let res = await fetch(URL + "/api/clientes", {
       method: "GET",
@@ -69,7 +61,7 @@
     let data = await res.json();   
     if (data) {
       mensaje = JSON.stringify(data, null, 2); 
-      setTimeout(() => (mensaje = ''), 5000);  
+      setTimeout(() => (mensaje = ''), 8000);  
       console.log(data);
       }
      
@@ -84,18 +76,18 @@
     type="text"
     name="email"
     placeholder="email"
-    tabindex="-2" />
+ />
   <br />
   <input
     bind:value={usuario.password}
     type="password"
     name="password"
     placeholder="password"
-    tabindex="-1" />
+ />
   <br />
   <input type="button" value="Registrarme" on:click={registrar} />
   <input type="button" value="Iniciar sesión" on:click={obtenerToken} /><br>
 
   <input type="button" value="Obtener clientes" on:click={getClientes} />
 </div>
-<pre id="feedback">{@html mensaje}</pre>
+<pre id="feedback" style='text-align: left;'>{@html mensaje}</pre>
